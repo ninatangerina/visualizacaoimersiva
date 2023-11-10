@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class CsvReader<T>
 {
-    public static IEnumerable<T> Process(string filePath, Func<string[], T> predicate)
+    public static IEnumerable<T> Process(string filePath, Func<string[], T> mapper)
     {
         var csvData = Resources.Load<TextAsset>(filePath);
 
@@ -19,12 +19,10 @@ public class CsvReader<T>
 
         var itemLines = csvData.text
             .Split('\n')
-            .ToList().Skip(1)
+            .ToList().AsReadOnly().Skip(1)
             .Select(itemLine => itemLine.Split(','));
 
-        var items = itemLines.Select(itemLine => predicate(itemLine));
-
-        return items;
+        return itemLines.Select(itemLine => mapper(itemLine));
     }
 }
 
